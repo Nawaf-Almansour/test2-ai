@@ -10,77 +10,70 @@ export const RegistrationProgress: React.FC<RegistrationProgressProps> = ({
   totalSteps,
 }) => {
   const steps = [
-    'Student Information',
-    'Guardian Information',
-    'Academic Information',
-    'Additional Information',
+    { id: 1, name: 'Student Info', description: 'Basic student information' },
+    { id: 2, name: 'Guardian Info', description: 'Parent/guardian details' },
+    { id: 3, name: 'Academic Info', description: 'Educational background' },
+    { id: 4, name: 'Additional Info', description: 'Preferences and consent' },
   ];
 
   return (
     <nav aria-label="Progress">
-      <ol className="flex items-center justify-between">
-        {steps.map((step, index) => {
-          const stepNumber = index + 1;
-          const isCompleted = stepNumber < currentStep;
-          const isCurrent = stepNumber === currentStep;
-
-          return (
-            <li key={stepNumber} className="flex-1">
-              {index !== steps.length - 1 && (
+      <ol className="flex items-center justify-center">
+        {steps.map((step, stepIdx) => (
+          <li key={step.id} className={stepIdx !== steps.length - 1 ? 'flex-1' : ''}>
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
                 <div
-                  className={`${
-                    isCompleted ? 'bg-blue-600' : 'bg-gray-200'
-                  } h-0.5 w-full mx-auto mb-6`}
-                  aria-hidden="true"
-                />
-              )}
-              <div className="flex items-center">
-                <div
-                  className={`${
-                    isCompleted
-                      ? 'bg-blue-600'
-                      : isCurrent
-                      ? 'bg-blue-600'
-                      : 'bg-gray-200'
-                  } h-10 w-10 rounded-full flex items-center justify-center mx-auto mb-2`}
+                  className={`relative flex items-center justify-center w-10 h-10 rounded-full border-2 ${
+                    step.id <= currentStep
+                      ? 'border-blue-600 bg-blue-600'
+                      : 'border-gray-300 bg-white'
+                  }`}
                 >
-                  {isCompleted ? (
+                  {step.id < currentStep ? (
                     <svg
-                      className="h-6 w-6 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
+                      className="w-6 h-6 text-white"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
                     >
                       <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
                       />
                     </svg>
                   ) : (
                     <span
-                      className={`${
-                        isCurrent ? 'text-white' : 'text-gray-500'
-                      } text-sm font-medium`}
+                      className={`text-sm font-medium ${
+                        step.id === currentStep ? 'text-white' : 'text-gray-500'
+                      }`}
                     >
-                      {stepNumber}
+                      {step.id}
                     </span>
                   )}
                 </div>
-                <div className="hidden sm:block text-center">
-                  <div
-                    className={`${
-                      isCurrent ? 'text-blue-600' : 'text-gray-500'
-                    } text-sm font-medium`}
-                  >
-                    {step}
-                  </div>
-                </div>
               </div>
-            </li>
-          );
-        })}
+              <div className="ml-4 min-w-0 flex-1">
+                <p
+                  className={`text-sm font-medium ${
+                    step.id <= currentStep ? 'text-blue-600' : 'text-gray-500'
+                  }`}
+                >
+                  {step.name}
+                </p>
+                <p className="text-xs text-gray-500">{step.description}</p>
+              </div>
+            </div>
+            {stepIdx !== steps.length - 1 && (
+              <div
+                className={`flex-1 h-0.5 mx-4 ${
+                  step.id < currentStep ? 'bg-blue-600' : 'bg-gray-300'
+                }`}
+                aria-hidden="true"
+              />
+            )}
+          </li>
+        ))}
       </ol>
     </nav>
   );

@@ -9,6 +9,7 @@ import { AcademicInformationStep } from './AcademicInformationStep';
 import { AdditionalInformationStep } from './AdditionalInformationStep';
 import { RegistrationReview } from './RegistrationReview';
 import { RegistrationProgress } from './RegistrationProgress';
+import { transformFormDataToApiRequest, transformApiErrorToFormErrors } from '../../utils/transformers';
 
 interface RegistrationFormProps {
   onSuccess: (requestId: string) => void;
@@ -17,7 +18,7 @@ interface RegistrationFormProps {
 export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isReviewing, setIsReviewing] = useState(false);
-  const { submitRegistration, isSubmitting, error } = useRegistration();
+  const { submitRegistration, isSubmitting, error, isSuccess, reset } = useRegistration();
 
   const methods = useForm<RegistrationFormData>({
     resolver: zodResolver(registrationSchema),
@@ -52,6 +53,16 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess })
     },
     mode: 'onChange',
   });
+
+  // Reset form after successful submission
+  React.useEffect(() => {
+    if (isSuccess) {
+      methods.reset();
+      setCurrentStep(1);
+      setIsReviewing(false);
+      reset(); // Reset the mutation state
+    }
+  }, [isSuccess, methods, reset]);
 
   const totalSteps = 4;
   const isLastStep = currentStep === totalSteps;
@@ -116,9 +127,12 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess })
 
   const handleSubmit = async (data: RegistrationFormData) => {
     try {
-      const result = await submitRegistration(data);
+      // Transform form data to API request format
+      const apiRequest = transformFormDataToApiRequest(data);
+      const result = await submitRegistration(apiRequest as any);
       onSuccess(result.requestId);
     } catch (error) {
+      // Error is already handled by the hook with toast notifications
       console.error('Registration failed:', error);
     }
   };
@@ -126,6 +140,19 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess })
   const handleEdit = (step: number) => {
     setIsReviewing(false);
     setCurrentStep(step);
+  };
+
+  // Get field-level errors for better UX
+  const getFieldError = (fieldName: string) => {
+    const formError = methods.formState.errors[fieldName as keyof RegistrationFormData];
+    const apiErrors = transformApiErrorToFormErrors(error);
+    const apiError = apiErrors[fieldName];
+    
+    if (apiError) {
+      return { message: apiError };
+    }
+    
+    return formError;
   };
 
   if (isReviewing) {
@@ -155,17 +182,17 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess })
         <RegistrationProgress currentStep={currentStep} totalSteps={totalSteps} />
         
         <div className="mt-6">
-          {currentStep === 1 && <StudentInformationStep />}
-          {currentStep === 2 && <GuardianInformationStep />}
-          {currentStep === 3 && <AcademicInformationStep />}
-          {currentStep === 4 && <AdditionalInformationStep />}
+          {currentStep === 1 && <StudentInformationStep getFieldError={getFieldError} />}
+          {currentStep === 2 && <GuardianInformationStep getFieldError={getFieldError} />}
+          {currentStep === 3 && <AcademicInformationStep getFieldError={getFieldError} />}
+          {currentStep === 4 && <AdditionalInformationStep getFieldError={getFieldError} />}
         </div>
 
         <div className="mt-8 flex justify-between">
           <button
             type="button"
             onClick={handlePrevious}
-            disabled={currentStep === 1}
+            disabled={currentStep === 1 || isSubmitting}
             className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Previous
@@ -181,11 +208,31 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess })
           </button>
         </div>
 
+        {/* Show field-level errors in a summary */}
         {error && (
-          <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-md">
-            <p className="text-sm text-red-600">
-              {error.error?.message || 'An error occurred. Please try again.'}
-            </p>
+          <div className="mt-4">
+            {error?.error?.fields && Object.keys(error.error.fields).length > 0 && (
+              <div className="p-4 bg-red-50 border border-red-200 rounded-md">
+                <h4 className="text-sm font-medium text-red-800 mb-2">Please correct the following errors:</h4>
+                <ul className="text-sm text-red-600 space-y-1">
+                  {Object.entries(error.error.fields).map(([field, message]) => (
+                    <li key={field} className="flex items-start">
+                      <span className="font-medium mr-2">{field}:</span>
+                      <span>{message}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            
+            {/* General error message */}
+            {!error?.error?.fields && (
+              <div className="p-4 bg-red-50 border border-red-200 rounded-md">
+                <p className="text-sm text-red-600">
+                  {error?.error?.message || 'An error occurred. Please try again.'}
+                </p>
+              </div>
+            )}
           </div>
         )}
       </div>

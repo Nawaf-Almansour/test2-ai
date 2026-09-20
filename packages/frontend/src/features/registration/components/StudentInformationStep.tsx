@@ -19,7 +19,11 @@ const nationalities = [
   'Other',
 ];
 
-export const StudentInformationStep: React.FC = () => {
+interface StudentInformationStepProps {
+  getFieldError?: (fieldName: string) => { message: string } | undefined;
+}
+
+export const StudentInformationStep: React.FC<StudentInformationStepProps> = ({ getFieldError }) => {
   const {
     register,
     formState: { errors },
@@ -31,6 +35,18 @@ export const StudentInformationStep: React.FC = () => {
   const watchedGender = watch('student.gender');
   const watchedRequestedGrade = watch('student.requestedGrade');
   const watchedNationality = watch('student.nationality');
+
+  const getErrorMessage = (fieldPath: string) => {
+    const formError = errors.student?.[fieldPath.split('.')[1] as keyof typeof errors.student];
+    const apiError = getFieldError?.(`student.${fieldPath}`);
+    return formError?.message || apiError?.message;
+  };
+
+  const hasError = (fieldPath: string) => {
+    const formError = errors.student?.[fieldPath.split('.')[1] as keyof typeof errors.student];
+    const apiError = getFieldError?.(`student.${fieldPath}`);
+    return !!(formError || apiError);
+  };
 
   return (
     <div>
@@ -48,11 +64,11 @@ export const StudentInformationStep: React.FC = () => {
               id="student.firstName"
               {...register('student.firstName')}
               placeholder="Enter first name"
-              className={`mt-1 ${errors.student?.firstName ? 'border-red-500' : ''}`}
+              className={`mt-1 ${hasError('student.firstName') ? 'border-red-500' : ''}`}
             />
-            {errors.student?.firstName && (
+            {getErrorMessage('student.firstName') && (
               <p className="mt-1 text-sm text-red-600">
-                {errors.student.firstName.message}
+                {getErrorMessage('student.firstName')}
               </p>
             )}
           </div>
@@ -63,11 +79,11 @@ export const StudentInformationStep: React.FC = () => {
               id="student.middleName"
               {...register('student.middleName')}
               placeholder="Enter middle name (optional)"
-              className={`mt-1 ${errors.student?.middleName ? 'border-red-500' : ''}`}
+              className={`mt-1 ${hasError('student.middleName') ? 'border-red-500' : ''}`}
             />
-            {errors.student?.middleName && (
+            {getErrorMessage('student.middleName') && (
               <p className="mt-1 text-sm text-red-600">
-                {errors.student.middleName.message}
+                {getErrorMessage('student.middleName')}
               </p>
             )}
           </div>
@@ -80,11 +96,11 @@ export const StudentInformationStep: React.FC = () => {
               id="student.lastName"
               {...register('student.lastName')}
               placeholder="Enter last name"
-              className={`mt-1 ${errors.student?.lastName ? 'border-red-500' : ''}`}
+              className={`mt-1 ${hasError('student.lastName') ? 'border-red-500' : ''}`}
             />
-            {errors.student?.lastName && (
+            {getErrorMessage('student.lastName') && (
               <p className="mt-1 text-sm text-red-600">
-                {errors.student.lastName.message}
+                {getErrorMessage('student.lastName')}
               </p>
             )}
           </div>
@@ -99,11 +115,11 @@ export const StudentInformationStep: React.FC = () => {
               id="student.dateOfBirth"
               type="date"
               {...register('student.dateOfBirth')}
-              className={`mt-1 ${errors.student?.dateOfBirth ? 'border-red-500' : ''}`}
+              className={`mt-1 ${hasError('student.dateOfBirth') ? 'border-red-500' : ''}`}
             />
-            {errors.student?.dateOfBirth && (
+            {getErrorMessage('student.dateOfBirth') && (
               <p className="mt-1 text-sm text-red-600">
-                {errors.student.dateOfBirth.message}
+                {getErrorMessage('student.dateOfBirth')}
               </p>
             )}
           </div>
@@ -119,7 +135,7 @@ export const StudentInformationStep: React.FC = () => {
                 trigger('student.nationality');
               }}
             >
-              <SelectTrigger className={`mt-1 ${errors.student?.nationality ? 'border-red-500' : ''}`}>
+              <SelectTrigger className={`mt-1 ${hasError('student.nationality') ? 'border-red-500' : ''}`}>
                 <SelectValue placeholder="Select nationality" />
               </SelectTrigger>
               <SelectContent>
@@ -130,9 +146,9 @@ export const StudentInformationStep: React.FC = () => {
                 ))}
               </SelectContent>
             </Select>
-            {errors.student?.nationality && (
+            {getErrorMessage('student.nationality') && (
               <p className="mt-1 text-sm text-red-600">
-                {errors.student.nationality.message}
+                {getErrorMessage('student.nationality')}
               </p>
             )}
           </div>
@@ -159,9 +175,9 @@ export const StudentInformationStep: React.FC = () => {
               <Label htmlFor="female">Female</Label>
             </div>
           </RadioGroup>
-          {errors.student?.gender && (
+          {getErrorMessage('student.gender') && (
             <p className="mt-1 text-sm text-red-600">
-              {errors.student.gender.message}
+              {getErrorMessage('student.gender')}
             </p>
           )}
         </div>
@@ -172,11 +188,11 @@ export const StudentInformationStep: React.FC = () => {
             id="student.nationalId"
             {...register('student.nationalId')}
             placeholder="Enter 10-digit national ID"
-            className={`mt-1 ${errors.student?.nationalId ? 'border-red-500' : ''}`}
+            className={`mt-1 ${hasError('student.nationalId') ? 'border-red-500' : ''}`}
           />
-          {errors.student?.nationalId && (
+          {getErrorMessage('student.nationalId') && (
             <p className="mt-1 text-sm text-red-600">
-              {errors.student.nationalId.message}
+              {getErrorMessage('student.nationalId')}
             </p>
           )}
         </div>
@@ -192,7 +208,7 @@ export const StudentInformationStep: React.FC = () => {
               trigger('student.requestedGrade');
             }}
           >
-            <SelectTrigger className={`mt-1 ${errors.student?.requestedGrade ? 'border-red-500' : ''}`}>
+            <SelectTrigger className={`mt-1 ${hasError('student.requestedGrade') ? 'border-red-500' : ''}`}>
               <SelectValue placeholder="Select requested grade" />
             </SelectTrigger>
             <SelectContent>
@@ -203,9 +219,9 @@ export const StudentInformationStep: React.FC = () => {
               ))}
             </SelectContent>
           </Select>
-          {errors.student?.requestedGrade && (
+          {getErrorMessage('student.requestedGrade') && (
             <p className="mt-1 text-sm text-red-600">
-              {errors.student.requestedGrade.message}
+              {getErrorMessage('student.requestedGrade')}
             </p>
           )}
         </div>

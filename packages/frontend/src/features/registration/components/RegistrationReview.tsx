@@ -119,18 +119,6 @@ export const RegistrationReview: React.FC<RegistrationReviewProps> = ({
             <dt className="text-sm font-medium text-gray-500">Requested Grade</dt>
             <dd className="mt-1 text-sm text-gray-900">{getGradeLabel(data.student.requestedGrade)}</dd>
           </div>
-          {data.student.currentSchool && (
-            <div>
-              <dt className="text-sm font-medium text-gray-500">Current School</dt>
-              <dd className="mt-1 text-sm text-gray-900">{data.student.currentSchool}</dd>
-            </div>
-          )}
-          {data.student.currentGrade && (
-            <div>
-              <dt className="text-sm font-medium text-gray-500">Current Grade</dt>
-              <dd className="mt-1 text-sm text-gray-900">{data.student.currentGrade}</dd>
-            </div>
-          )}
         </dl>
       </div>
 
@@ -202,9 +190,13 @@ export const RegistrationReview: React.FC<RegistrationReviewProps> = ({
           {data.academic?.currentGrade && (
             <div>
               <dt className="text-sm font-medium text-gray-500">Current Grade</dt>
-              <dd className="mt-1 text-sm text-gray-900">{data.academic.currentGrade}</dd>
+              <dd className="mt-1 text-sm text-gray-900">{getGradeLabel(data.academic.currentGrade)}</dd>
             </div>
           )}
+          <div>
+            <dt className="text-sm font-medium text-gray-500">Requested Grade</dt>
+            <dd className="mt-1 text-sm text-gray-900">{getGradeLabel(data.academic?.requestedGrade || data.student.requestedGrade)}</dd>
+          </div>
           {data.academic?.transferReason && (
             <div className="sm:col-span-2">
               <dt className="text-sm font-medium text-gray-500">Reason for Transfer</dt>
@@ -284,11 +276,26 @@ export const RegistrationReview: React.FC<RegistrationReviewProps> = ({
         </button>
       </div>
 
+      {/* API Error Display */}
       {error && (
         <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-md">
+          <h4 className="text-sm font-medium text-red-800 mb-2">Submission Error</h4>
           <p className="text-sm text-red-600">
-            {error.error?.message || 'An error occurred. Please try again.'}
+            {error.error?.message || 'An error occurred while submitting your application. Please try again.'}
           </p>
+          {error.error?.fields && Object.keys(error.error.fields).length > 0 && (
+            <div className="mt-2">
+              <p className="text-xs font-medium text-red-700 mb-1">Field errors:</p>
+              <ul className="text-xs text-red-600 space-y-1">
+                {Object.entries(error.error.fields).map(([field, message]) => (
+                  <li key={field} className="flex items-start">
+                    <span className="font-medium mr-2">{field}:</span>
+                    <span>{message}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       )}
     </div>

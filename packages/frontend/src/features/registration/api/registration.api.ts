@@ -1,46 +1,23 @@
-import { RegistrationRequest, RegistrationResponse, ApiError } from '../types/registration.types';
+import { apiClient } from '../../../lib/api-client';
+import { RegistrationRequest, RegistrationResponse } from '../types/registration.types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+export const registrationApi = {
+  submitRegistration: async (data: RegistrationRequest): Promise<RegistrationResponse> => {
+    const response = await apiClient.post<RegistrationResponse>('/v1/registration-requests', data);
+    return response.data;
+  },
 
-class RegistrationApi {
-  private baseUrl: string;
+  // Optional: Add other registration-related API calls
+  getRegistrationStatus: async (requestId: string): Promise<RegistrationResponse> => {
+    const response = await apiClient.get<RegistrationResponse>(`/v1/registration-requests/${requestId}`);
+    return response.data;
+  },
 
-  constructor() {
-    this.baseUrl = `${API_BASE_URL}/api/v1`;
-  }
-
-  async submitRegistration(request: RegistrationRequest): Promise<RegistrationResponse> {
-    try {
-      const response = await fetch(`${this.baseUrl}/registration-requests`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(request),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw data as ApiError;
-      }
-
-      return data as RegistrationResponse;
-    } catch (error) {
-      if (error && typeof error === 'object' && 'error' in error) {
-        throw error as ApiError;
-      }
-      
-      // Network or other errors
-      throw {
-        success: false,
-        error: {
-          code: 'NETWORK_ERROR',
-          message: 'Unable to connect to the server. Please check your internet connection and try again.',
-        },
-      } as ApiError;
-    }
-  }
-}
-
-export const registrationApi = new RegistrationApi();
+  // Check for duplicate registrations
+  checkDuplicate: async (mobile: string, email?: string): Promise<{ exists: boolean }> => {
+    const response = await apiClient.get<{ exists: boolean }>('/v1/registration-requests/check-duplicate', {
+      params: { mobile, email },
+    });
+    return response.data;
+  },
+};

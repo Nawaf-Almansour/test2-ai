@@ -18,7 +18,11 @@ const contactMethods = [
   { value: 'email', label: 'Email' },
 ];
 
-export const GuardianInformationStep: React.FC = () => {
+interface GuardianInformationStepProps {
+  getFieldError?: (fieldName: string) => { message: string } | undefined;
+}
+
+export const GuardianInformationStep: React.FC<GuardianInformationStepProps> = ({ getFieldError }) => {
   const {
     register,
     formState: { errors },
@@ -29,6 +33,18 @@ export const GuardianInformationStep: React.FC = () => {
 
   const watchedRelationship = watch('guardian.relationship');
   const watchedContactMethod = watch('guardian.preferredContactMethod');
+
+  const getErrorMessage = (fieldPath: string) => {
+    const formError = errors.guardian?.[fieldPath.split('.')[1] as keyof typeof errors.guardian];
+    const apiError = getFieldError?.(`guardian.${fieldPath}`);
+    return formError?.message || apiError?.message;
+  };
+
+  const hasError = (fieldPath: string) => {
+    const formError = errors.guardian?.[fieldPath.split('.')[1] as keyof typeof errors.guardian];
+    const apiError = getFieldError?.(`guardian.${fieldPath}`);
+    return !!(formError || apiError);
+  };
 
   return (
     <div>
@@ -46,11 +62,11 @@ export const GuardianInformationStep: React.FC = () => {
               id="guardian.firstName"
               {...register('guardian.firstName')}
               placeholder="Enter first name"
-              className={`mt-1 ${errors.guardian?.firstName ? 'border-red-500' : ''}`}
+              className={`mt-1 ${hasError('guardian.firstName') ? 'border-red-500' : ''}`}
             />
-            {errors.guardian?.firstName && (
+            {getErrorMessage('guardian.firstName') && (
               <p className="mt-1 text-sm text-red-600">
-                {errors.guardian.firstName.message}
+                {getErrorMessage('guardian.firstName')}
               </p>
             )}
           </div>
@@ -63,11 +79,11 @@ export const GuardianInformationStep: React.FC = () => {
               id="guardian.lastName"
               {...register('guardian.lastName')}
               placeholder="Enter last name"
-              className={`mt-1 ${errors.guardian?.lastName ? 'border-red-500' : ''}`}
+              className={`mt-1 ${hasError('guardian.lastName') ? 'border-red-500' : ''}`}
             />
-            {errors.guardian?.lastName && (
+            {getErrorMessage('guardian.lastName') && (
               <p className="mt-1 text-sm text-red-600">
-                {errors.guardian.lastName.message}
+                {getErrorMessage('guardian.lastName')}
               </p>
             )}
           </div>
@@ -94,9 +110,9 @@ export const GuardianInformationStep: React.FC = () => {
               ))}
             </div>
           </RadioGroup>
-          {errors.guardian?.relationship && (
+          {getErrorMessage('guardian.relationship') && (
             <p className="mt-1 text-sm text-red-600">
-              {errors.guardian.relationship.message}
+              {getErrorMessage('guardian.relationship')}
             </p>
           )}
         </div>
@@ -110,11 +126,11 @@ export const GuardianInformationStep: React.FC = () => {
               id="guardian.mobile"
               {...register('guardian.mobile')}
               placeholder="+9665xxxxxxxx or 05xxxxxxxx"
-              className={`mt-1 ${errors.guardian?.mobile ? 'border-red-500' : ''}`}
+              className={`mt-1 ${hasError('guardian.mobile') ? 'border-red-500' : ''}`}
             />
-            {errors.guardian?.mobile && (
+            {getErrorMessage('guardian.mobile') && (
               <p className="mt-1 text-sm text-red-600">
-                {errors.guardian.mobile.message}
+                {getErrorMessage('guardian.mobile')}
               </p>
             )}
             <p className="mt-1 text-xs text-gray-500">
@@ -128,11 +144,11 @@ export const GuardianInformationStep: React.FC = () => {
               id="guardian.alternativeMobile"
               {...register('guardian.alternativeMobile')}
               placeholder="+9665xxxxxxxx or 05xxxxxxxx"
-              className={`mt-1 ${errors.guardian?.alternativeMobile ? 'border-red-500' : ''}`}
+              className={`mt-1 ${hasError('guardian.alternativeMobile') ? 'border-red-500' : ''}`}
             />
-            {errors.guardian?.alternativeMobile && (
+            {getErrorMessage('guardian.alternativeMobile') && (
               <p className="mt-1 text-sm text-red-600">
-                {errors.guardian.alternativeMobile.message}
+                {getErrorMessage('guardian.alternativeMobile')}
               </p>
             )}
             <p className="mt-1 text-xs text-gray-500">
@@ -148,14 +164,16 @@ export const GuardianInformationStep: React.FC = () => {
             type="email"
             {...register('guardian.email')}
             placeholder="parent@example.com"
-            className={`mt-1 ${errors.guardian?.email ? 'border-red-500' : ''}`}
+            className={`mt-1 ${hasError('guardian.email') ? 'border-red-500' : ''}`}
+            aria-describedby="guardian.email-description"
+            aria-invalid={hasError('guardian.email')}
           />
-          {errors.guardian?.email && (
-            <p className="mt-1 text-sm text-red-600">
-              {errors.guardian.email.message}
+          {getErrorMessage('guardian.email') && (
+            <p className="mt-1 text-sm text-red-600" id="guardian.email-error">
+              {getErrorMessage('guardian.email')}
             </p>
           )}
-          <p className="mt-1 text-xs text-gray-500">
+          <p className="mt-1 text-xs text-gray-500" id="guardian.email-description">
             Optional - used for official communications
           </p>
         </div>
@@ -181,9 +199,9 @@ export const GuardianInformationStep: React.FC = () => {
               ))}
             </div>
           </RadioGroup>
-          {errors.guardian?.preferredContactMethod && (
+          {getErrorMessage('guardian.preferredContactMethod') && (
             <p className="mt-1 text-sm text-red-600">
-              {errors.guardian.preferredContactMethod.message}
+              {getErrorMessage('guardian.preferredContactMethod')}
             </p>
           )}
         </div>
