@@ -4,6 +4,7 @@ import { Input } from '../../../components/ui/Input';
 import { Label } from '../../../components/ui/Label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/Select';
 import { RadioGroup, RadioGroupItem } from '../../../components/ui/RadioGroup';
+import { RegistrationFormData } from '../../schemas/registration.schema';
 
 const relationships = [
   { value: 'father', label: 'Father' },
@@ -24,7 +25,7 @@ export const GuardianInformationStep: React.FC = () => {
     setValue,
     watch,
     trigger,
-  } = useFormContext();
+  } = useFormContext<RegistrationFormData>();
 
   const watchedRelationship = watch('guardian.relationship');
   const watchedContactMethod = watch('guardian.preferredContactMethod');

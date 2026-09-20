@@ -1,8 +1,10 @@
 {
-  "name": "@school-platform/backend",
-  "version": "1.0.0",
-  "description": "School Platform Backend API",
+  "name": "school-platform-backend",
+  "version": "0.0.1",
+  "description": "School Platform Backend - NestJS API",
+  "author": "",
   "private": true,
+  "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -19,22 +21,23 @@
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
-    "@nestjs/config": "^3.0.0",
     "@nestjs/core": "^10.0.0",
-    "@nestjs/mongoose": "^10.0.0",
     "@nestjs/platform-express": "^10.0.0",
-    "@nestjs/swagger": "^7.1.0",
+    "@nestjs/mongoose": "^10.0.0",
+    "@nestjs/swagger": "^7.0.0",
+    "@nestjs/config": "^3.0.0",
     "@nestjs/throttler": "^5.0.0",
-    "bcrypt": "^5.1.0",
+    "@nestjs/terminus": "^10.0.0",
+    "@nestjs/router": "^0.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
-    "helmet": "^7.0.0",
-    "mongoose": "^7.5.0",
+    "mongoose": "^7.0.0",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "swagger-ui-express": "^5.0.0"
   },
   "devDependencies": {
-    "@nestjs/cli": "^10.4.9",
+    "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
     "@types/express": "^4.17.17",
@@ -62,7 +65,7 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
+    "rootDir": ".",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"

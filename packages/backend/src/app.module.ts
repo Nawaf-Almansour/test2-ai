@@ -1,23 +1,54 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { RegistrationModule } from './registration/registration.module';
+import { configuration } from './config/configuration';
+import { validationSchema } from './config/validation';
+import { CommonModule } from './common/common.module';
 import { HealthModule } from './health/health.module';
+import { RegistrationModule } from './registration/registration.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
+    // Configuration
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
+      load: [configuration],
+      validationSchema: validationSchema,
+      validationOptions: {
+        allowUnknown: true,
+        abortEarly: false,
+      },
     }),
-    MongooseModule.forRoot(process.env.MONGODB_URI || 'mongodb://localhost:27017/school-platform'),
-    ThrottlerModule.forRoot([{
-      ttl: 600000, // 10 minutes
-      limit: 5, // 5 requests per IP per 10 minutes
-    }]),
-    RegistrationModule,
+    // Rate limiting
+    ThrottlerModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        throttlers: [
+          {
+            ttl: configService.get('throttler.ttl'),
+            limit: configService.get('throttler.limit'),
+          },
+        ],
+      }),
+      inject: [ConfigService],
+    }),
+    // Database
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get('database.uri'),
+      }),
+      inject: [ConfigService],
+    }),
+    // Feature modules
+    CommonModule,
     HealthModule,
+    RegistrationModule,
   ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

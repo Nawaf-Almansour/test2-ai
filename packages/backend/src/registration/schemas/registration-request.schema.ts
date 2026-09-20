@@ -1,15 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-@Schema()
-export class StudentSchema {
-  @Prop({ required: true })
+@Schema({ _id: false })
+export class StudentSubSchema {
+  @Prop({ required: true, trim: true })
   firstName: string;
 
-  @Prop()
+  @Prop({ trim: true })
   middleName?: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, trim: true })
   lastName: string;
 
   @Prop({ required: true, type: Date })
@@ -18,10 +18,10 @@ export class StudentSchema {
   @Prop({ required: true, enum: ['male', 'female'] })
   gender: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, uppercase: true })
   nationality: string;
 
-  @Prop()
+  @Prop({ sparse: true })
   nationalId?: string;
 
   @Prop()
@@ -34,12 +34,12 @@ export class StudentSchema {
   requestedGrade: string;
 }
 
-@Schema()
-export class GuardianSchema {
-  @Prop({ required: true })
+@Schema({ _id: false })
+export class GuardianSubSchema {
+  @Prop({ required: true, trim: true })
   firstName: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, trim: true })
   lastName: string;
 
   @Prop({ required: true, enum: ['father', 'mother', 'legal_guardian', 'other'] })
@@ -51,15 +51,15 @@ export class GuardianSchema {
   @Prop()
   alternativeMobile?: string;
 
-  @Prop()
+  @Prop({ lowercase: true })
   email?: string;
 
   @Prop({ required: true, enum: ['phone', 'whatsapp', 'email'] })
   preferredContactMethod: string;
 }
 
-@Schema()
-export class AcademicSchema {
+@Schema({ _id: false })
+export class AcademicSubSchema {
   @Prop()
   previousSchool?: string;
 
@@ -67,14 +67,11 @@ export class AcademicSchema {
   currentGrade?: string;
 
   @Prop()
-  requestedGrade?: string;
-
-  @Prop()
   transferReason?: string;
 }
 
-@Schema()
-export class MetadataSchema {
+@Schema({ _id: false })
+export class MetadataSubSchema {
   @Prop()
   ipHash?: string;
 
@@ -88,31 +85,33 @@ export class MetadataSchema {
 export type RegistrationRequestDocument = RegistrationRequest & Document;
 
 @Schema({
+  collection: 'registration_requests',
+  timestamps: true,
   toJSON: {
-    transform: function(doc, ret) {
+    transform: function (doc, ret) {
       delete ret._id;
       delete ret.__v;
       return ret;
-    }
-  }
+    },
+  },
 })
 export class RegistrationRequest {
   @Prop({ required: true, unique: true, index: true })
   referenceNumber: string;
 
-  @Prop({ required: true, type: StudentSchema })
-  student: StudentSchema;
+  @Prop({ required: true, type: StudentSubSchema })
+  student: StudentSubSchema;
 
-  @Prop({ required: true, type: GuardianSchema })
-  guardian: GuardianSchema;
+  @Prop({ required: true, type: GuardianSubSchema })
+  guardian: GuardianSubSchema;
 
-  @Prop({ required: true, type: AcademicSchema })
-  academic: AcademicSchema;
+  @Prop({ type: AcademicSubSchema, default: {} })
+  academic: AcademicSubSchema;
 
-  @Prop()
+  @Prop({ default: false })
   transportationRequired?: boolean;
 
-  @Prop()
+  @Prop({ default: false })
   siblingAtSchool?: boolean;
 
   @Prop()
@@ -124,36 +123,59 @@ export class RegistrationRequest {
   @Prop({ required: true })
   registrationConsent: boolean;
 
-  @Prop({ required: true })
+  @Prop({ default: false })
   marketingConsent: boolean;
 
-  @Prop({ 
-    required: true, 
+  @Prop({
+    required: true,
     enum: [
-      'SUBMITTED', 'UNDER_REVIEW', 'CONTACTED', 'ASSESSMENT_REQUIRED',
-      'ASSESSMENT_SCHEDULED', 'APPROVED', 'WAITLISTED', 'REJECTED',
-      'ENROLLED', 'WITHDRAWN'
+      'SUBMITTED',
+      'UNDER_REVIEW',
+      'CONTACTED',
+      'ASSESSMENT_REQUIRED',
+      'ASSESSMENT_SCHEDULED',
+      'APPROVED',
+      'WAITLISTED',
+      'REJECTED',
+      'ENROLLED',
+      'WITHDRAWN',
     ],
     default: 'SUBMITTED',
-    index: true
+    index: true,
   })
   status: string;
 
-  @Prop({ type: MetadataSchema })
-  metadata: MetadataSchema;
-
-  @Prop({ default: Date.now, index: true })
-  createdAt: Date;
-
-  @Prop({ default: Date.now })
-  updatedAt: Date;
+  @Prop({ type: MetadataSubSchema })
+  metadata: MetadataSubSchema;
 }
 
 export const RegistrationRequestSchema = SchemaFactory.createForClass(RegistrationRequest);
 
-// Compound index for status and date queries
+// ── Database indexes (spec section 9) ──────────────────────────────
+// Primary lookup
+RegistrationRequestSchema.index({ referenceNumber: 1 }, { unique: true });
+
+// Status + date for dashboard queries
 RegistrationRequestSchema.index({ status: 1, createdAt: -1 });
+
+// Recent registrations
 RegistrationRequestSchema.index({ createdAt: -1 });
+
+// Grade distribution queries
 RegistrationRequestSchema.index({ 'student.requestedGrade': 1 });
+
+// Duplicate detection compound index
+RegistrationRequestSchema.index(
+  {
+    'guardian.mobile': 1,
+    'student.firstName': 1,
+    'student.lastName': 1,
+    'student.dateOfBirth': 1,
+    'student.requestedGrade': 1,
+  },
+  { name: 'duplicate_detection' },
+);
+
+// Guardian lookup
 RegistrationRequestSchema.index({ 'guardian.mobile': 1 });
 RegistrationRequestSchema.index({ 'guardian.email': 1 });

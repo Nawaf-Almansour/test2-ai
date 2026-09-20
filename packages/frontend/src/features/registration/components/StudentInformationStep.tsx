@@ -4,6 +4,7 @@ import { Input } from '../../../components/ui/Input';
 import { Label } from '../../../components/ui/Label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/Select';
 import { RadioGroup, RadioGroupItem } from '../../../components/ui/RadioGroup';
+import { RegistrationFormData } from '../../schemas/registration.schema';
 
 const grades = [
   'KG1', 'KG2', 'KG3',
@@ -25,7 +26,7 @@ export const StudentInformationStep: React.FC = () => {
     setValue,
     watch,
     trigger,
-  } = useFormContext();
+  } = useFormContext<RegistrationFormData>();
 
   const watchedGender = watch('student.gender');
   const watchedRequestedGrade = watch('student.requestedGrade');

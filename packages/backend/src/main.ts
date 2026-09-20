@@ -16,6 +16,9 @@ async function bootstrap() {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
     }),
   );
 
@@ -29,11 +32,15 @@ async function bootstrap() {
   if (process.env.NODE_ENV !== 'production') {
     const config = new DocumentBuilder()
       .setTitle('School Platform API')
-      .setDescription('School Registration API documentation')
+      .setDescription(
+        'School Registration Platform API documentation. Provides endpoints for registration requests and health monitoring.',
+      )
       .setVersion('1.0')
-      .addTag('registration')
+      .addTag('health', 'Health check endpoints')
+      .addTag('registration', 'Registration request endpoints')
+      .addBearerAuth()
       .build();
-    
+
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api/docs', app, document);
   }
@@ -41,6 +48,7 @@ async function bootstrap() {
   const port = process.env.PORT || 3001;
   await app.listen(port);
   console.log(`Application is running on: http://localhost:${port}`);
+  console.log(`Swagger docs available at: http://localhost:${port}/api/docs`);
 }
 
 bootstrap();

@@ -18,11 +18,12 @@
     "docker:prod": "docker-compose -f docker-compose.prod.yml up -d"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
+    "concurrently": "^8.2.2",
     "eslint": "^8.45.0",
-    "prettier": "^3.0.0"
+    "prettier": "^3.0.0",
+    "typescript": "^5.9.3"
   },
   "engines": {
     "node": ">=18.0.0",

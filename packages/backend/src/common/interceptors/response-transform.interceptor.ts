@@ -23,12 +23,23 @@ export class ResponseTransformInterceptor<T>
     const path = request.url;
 
     return next.handle().pipe(
-      map((data) => ({
-        success: true,
-        data,
-        timestamp: new Date().toISOString(),
-        path,
-      })),
+      map((data) => {
+        // If the controller already returned a shaped response with `success`, pass it through
+        if (data && typeof data === 'object' && 'success' in data) {
+          return {
+            ...data,
+            timestamp: new Date().toISOString(),
+            path,
+          };
+        }
+
+        return {
+          success: true,
+          data,
+          timestamp: new Date().toISOString(),
+          path,
+        };
+      }),
     );
   }
 }

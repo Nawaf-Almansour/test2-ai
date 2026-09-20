@@ -4,6 +4,7 @@ import { Input } from '../../../components/ui/Input';
 import { Label } from '../../../components/ui/Label';
 import { Checkbox } from '../../../components/ui/Checkbox';
 import { Textarea } from '../../../components/ui/Textarea';
+import { RegistrationFormData } from '../../schemas/registration.schema';
 
 const sources = [
   'website',
@@ -18,7 +19,7 @@ export const AdditionalInformationStep: React.FC = () => {
   const {
     register,
     formState: { errors },
-  } = useFormContext();
+  } = useFormContext<RegistrationFormData>();
 
   return (
     <div>

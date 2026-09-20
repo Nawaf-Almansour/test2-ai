@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import RegistrationForm from '../features/registration/components/RegistrationForm';
+import { RegistrationForm } from '../features/registration/components/RegistrationForm';
 
 const ApplyPage: React.FC = () => {
   const navigate = useNavigate();
