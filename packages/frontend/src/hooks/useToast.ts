@@ -71,7 +71,7 @@ export const ToastContainer: React.FC = () => {
 };
 
 const ToastItem: React.FC<{ toast: Toast; onRemove: (id: string) => void }> = ({ toast, onRemove }) => {
-  const getToastStyles = (type: ToastType) => {
+  const getToastStyles = (type: ToastType): string => {
     switch (type) {
       case 'success':
         return 'bg-green-50 border-green-200 text-green-800';
