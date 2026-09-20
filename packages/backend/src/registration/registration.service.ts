@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { RegistrationRequest } from './schemas/registration-request.schema';
+import { RegistrationRequest, RegistrationRequestDocument } from './schemas/registration-request.schema';
 import { CreateRegistrationRequestDto } from './dto/create-registration-request.dto';
 import { RegistrationStatus } from './enums/registration-status.enum';
 import * as crypto from 'crypto';
@@ -12,7 +12,7 @@ export class RegistrationService {
 
   constructor(
     @InjectModel(RegistrationRequest.name)
-    private registrationModel: Model<RegistrationRequest>,
+    private registrationModel: Model<RegistrationRequestDocument>,
   ) {}
 
   async createRegistrationRequest(
@@ -65,13 +65,13 @@ export class RegistrationService {
         requestId: referenceNumber,
         status: RegistrationStatus.SUBMITTED,
       };
-    } catch (error) {
-      this.logger.error(`Failed to create registration request: ${error.message}`);
+    } catch (error: any) {
+      this.logger.error(`Failed to create registration request: ${error.message || error}`);
       throw new BadRequestException('Failed to create registration request');
     }
   }
 
-  private async checkForDuplicates(createDto: CreateRegistrationRequestDto): Promise<RegistrationRequest | null> {
+  private async checkForDuplicates(createDto: CreateRegistrationRequestDto): Promise<RegistrationRequestDocument | null> {
     const normalizedMobile = this.normalizeMobileNumber(createDto.guardian.mobile);
     
     // Check for registration with same guardian mobile, student name, and date of birth
@@ -112,11 +112,11 @@ export class RegistrationService {
     return `REG-${year}-${random}`;
   }
 
-  async findByReferenceNumber(referenceNumber: string): Promise<RegistrationRequest | null> {
+  async findByReferenceNumber(referenceNumber: string): Promise<RegistrationRequestDocument | null> {
     return this.registrationModel.findOne({ referenceNumber }).exec();
   }
 
-  async findAll(limit = 50, offset = 0): Promise<RegistrationRequest[]> {
+  async findAll(limit = 50, offset = 0): Promise<RegistrationRequestDocument[]> {
     return this.registrationModel
       .find()
       .sort({ createdAt: -1 })

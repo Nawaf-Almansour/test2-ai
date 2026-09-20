@@ -76,7 +76,7 @@ export class RegistrationController {
         status: result.status,
         message: 'Registration request submitted successfully.',
       };
-    } catch (error) {
+    } catch (error: any) {
       const duration = Date.now() - startTime;
       
       if (error instanceof BadRequestException) {
@@ -84,7 +84,7 @@ export class RegistrationController {
         throw error;
       }
 
-      this.logger.error(`Registration request failed: ${error.message} in ${duration}ms`);
+      this.logger.error(`Registration request failed: ${error.message || error} in ${duration}ms`);
       
       throw new BadRequestException({
         success: false,
