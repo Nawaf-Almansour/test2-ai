@@ -1,48 +1,66 @@
-// API Request/Response Types
+// API Request/Response Types - aligned with backend DTOs
+
+// Grade enum matching backend
+export type Grade = 
+  | 'KG1' | 'KG2' | 'KG3'
+  | 'GRADE_1' | 'GRADE_2' | 'GRADE_3' | 'GRADE_4' 
+  | 'GRADE_5' | 'GRADE_6' | 'GRADE_7' | 'GRADE_8'
+  | 'GRADE_9' | 'GRADE_10' | 'GRADE_11' | 'GRADE_12';
+
+// Relationship enum matching backend
+export type Relationship = 'father' | 'mother' | 'legal_guardian' | 'other';
+
+// Gender enum matching backend
+export type Gender = 'male' | 'female';
+
+// Contact method enum matching backend
+export type ContactMethod = 'whatsapp' | 'phone' | 'email';
+
 export interface RegistrationRequest {
   student: {
     firstName: string;
     middleName?: string;
     lastName: string;
-    dateOfBirth: string;
-    gender: 'male' | 'female';
-    nationality: string;
+    dateOfBirth: string; // ISO date string
+    gender: Gender;
+    nationality: string; // ISO 3166-1 alpha-2 code (e.g., 'SA')
     nationalId?: string;
-    requestedGrade: string;
+    currentSchool?: string;
+    currentGrade?: Grade;
+    requestedGrade: Grade;
   };
   guardian: {
     firstName: string;
     lastName: string;
-    relationship: 'father' | 'mother' | 'guardian';
-    mobile: string;
+    relationship: Relationship;
+    mobile: string; // Format: +9665XXXXXXXX
     alternativeMobile?: string;
     email?: string;
-    preferredContactMethod: 'whatsapp' | 'phone' | 'email';
+    preferredContactMethod: ContactMethod;
   };
   academic?: {
-    currentSchool?: string;
-    currentGrade?: string;
-    requestedGrade?: string;
+    previousSchool?: string;
+    currentGrade?: Grade;
     transferReason?: string;
   };
-  transportationRequired: boolean;
-  siblingAtSchool: boolean;
-  source: string;
+  transportationRequired?: boolean;
+  siblingAtSchool?: boolean;
+  source?: string;
   notes?: string;
   registrationConsent: boolean;
-  marketingConsent: boolean;
+  marketingConsent?: boolean;
 }
 
+// Backend response format (from RegistrationResponseDto)
 export interface RegistrationResponse {
-  requestId: string;
-  status: 'pending' | 'under_review' | 'approved' | 'rejected' | 'waitlisted';
-  submittedAt: string;
-  reviewedAt?: string;
-  estimatedResponseDate?: string;
-  notes?: string;
+  success: boolean;
+  requestId: string; // Format: REG-2026-000123
+  status: string; // 'submitted' initially
+  message: string;
+  warning?: string; // Present for duplicate registrations
 }
 
-// Error Types
+// Error Types - aligned with backend ErrorResponseDto
 export interface ApiError {
   code: string;
   message: string;
@@ -154,12 +172,12 @@ export interface SchoolInfo {
   phone: string;
   email: string;
   website: string;
-  grades: string[];
+  grades: Grade[];
 }
 
 // Grade Information Types
 export interface GradeInfo {
-  level: string;
+  level: Grade;
   minAge: number;
   maxAge: number;
   capacity: number;
