@@ -1,15 +1,13 @@
-import 'reflect-metadata';
-import { ValidationPipe } from '@nestjs/common';
+// Jest test setup
+import { Test, TestingModule } from '@nestjs/testing';
 
-// Global test setup
-beforeAll(async () => {
-  // Mock console methods to reduce noise in tests
-  jest.spyOn(console, 'log').mockImplementation(() => {});
-  jest.spyOn(console, 'warn').mockImplementation(() => {});
-  jest.spyOn(console, 'error').mockImplementation(() => {});
-});
+// Mock console methods to reduce noise in tests
+global.console = {
+  ...console,
+  log: jest.fn(),
+  warn: jest.fn(),
+  error: jest.fn(),
+};
 
-afterAll(() => {
-  // Restore console methods
-  jest.restoreAllMocks();
-});
+// Set default timeout for async tests
+jest.setTimeout(10000);

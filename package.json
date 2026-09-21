@@ -18,12 +18,18 @@
     "docker:prod": "docker-compose -f docker-compose.prod.yml up -d"
   },
   "devDependencies": {
+    "@types/jest": "^29.5.14",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
+    "@vitest/coverage-v8": "^5.0.1",
+    "@vitest/ui": "^5.0.1",
     "concurrently": "^8.2.2",
     "eslint": "^8.45.0",
+    "jest": "^29.7.0",
     "prettier": "^3.0.0",
-    "typescript": "^5.9.3"
+    "ts-jest": "^29.4.12",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.1"
   },
   "engines": {
     "node": ">=18.0.0",
