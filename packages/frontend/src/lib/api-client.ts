@@ -3,7 +3,7 @@ import { ApiError } from '../features/registration/types/registration.types';
 
 // Create axios instance with default configuration
 export const apiClient: AxiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001/api/v1',
+  baseURL: import.meta.env.VITE_API_URL || '/api/v1',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
