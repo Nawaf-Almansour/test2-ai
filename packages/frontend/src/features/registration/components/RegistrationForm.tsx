@@ -30,7 +30,6 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess })
         dateOfBirth: '',
         gender: undefined,
         nationality: '',
-        requestedGrade: '',
       },
       guardian: {
         firstName: '',
@@ -42,7 +41,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess })
         preferredContactMethod: 'whatsapp',
       },
       academic: {
-        requestedGrade: '',
+        requestedGrade: undefined,
       },
       transportationRequired: false,
       siblingAtSchool: false,
@@ -143,16 +142,17 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess })
   };
 
   // Get field-level errors for better UX
-  const getFieldError = (fieldName: string) => {
-    const formError = methods.formState.errors[fieldName as keyof RegistrationFormData];
+  const getFieldError = (fieldName: string): { message: string } | undefined => {
     const apiErrors = transformApiErrorToFormErrors(error);
     const apiError = apiErrors[fieldName];
-    
     if (apiError) {
       return { message: apiError };
     }
-    
-    return formError;
+    const formError = methods.formState.errors[fieldName as keyof RegistrationFormData];
+    if (formError && typeof formError === 'object' && 'message' in formError) {
+      return { message: String(formError.message) };
+    }
+    return undefined;
   };
 
   if (isReviewing) {
@@ -208,14 +208,13 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess })
           </button>
         </div>
 
-        {/* Show field-level errors in a summary */}
         {error && (
           <div className="mt-4">
-            {error?.error?.fields && Object.keys(error.error.fields).length > 0 && (
+            {(error as { error?: { fields?: Record<string, string>; message?: string } }).error?.fields && Object.keys((error as { error?: { fields?: Record<string, string> } }).error?.fields ?? {}).length > 0 && (
               <div className="p-4 bg-red-50 border border-red-200 rounded-md">
                 <h4 className="text-sm font-medium text-red-800 mb-2">Please correct the following errors:</h4>
                 <ul className="text-sm text-red-600 space-y-1">
-                  {Object.entries(error.error.fields).map(([field, message]) => (
+                  {Object.entries((error as { error?: { fields?: Record<string, string> } }).error?.fields ?? {}).map(([field, message]) => (
                     <li key={field} className="flex items-start">
                       <span className="font-medium mr-2">{field}:</span>
                       <span>{message}</span>
@@ -226,10 +225,10 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess })
             )}
             
             {/* General error message */}
-            {!error?.error?.fields && (
+            {!((error as { error?: { fields?: Record<string, string> } }).error?.fields) && (
               <div className="p-4 bg-red-50 border border-red-200 rounded-md">
                 <p className="text-sm text-red-600">
-                  {error?.error?.message || 'An error occurred. Please try again.'}
+                  {(error as { error?: { message?: string } }).error?.message || 'An error occurred. Please try again.'}
                 </p>
               </div>
             )}

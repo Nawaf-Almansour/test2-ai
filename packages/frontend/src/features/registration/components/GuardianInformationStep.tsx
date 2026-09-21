@@ -2,14 +2,13 @@ import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import { Input } from '../../../components/ui/Input';
 import { Label } from '../../../components/ui/Label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/Select';
 import { RadioGroup, RadioGroupItem } from '../../../components/ui/RadioGroup';
 import { RegistrationFormData } from '../schemas/registration.schema';
 
 const relationships = [
   { value: 'father', label: 'Father' },
   { value: 'mother', label: 'Mother' },
-  { value: 'guardian', label: 'Guardian' },
+  { value: 'legal_guardian', label: 'Legal Guardian' },
 ];
 
 const contactMethods = [
@@ -37,7 +36,8 @@ export const GuardianInformationStep: React.FC<GuardianInformationStepProps> = (
   const getErrorMessage = (fieldPath: string) => {
     const formError = errors.guardian?.[fieldPath.split('.')[1] as keyof typeof errors.guardian];
     const apiError = getFieldError?.(`guardian.${fieldPath}`);
-    return formError?.message || apiError?.message;
+    const formMessage = formError && typeof formError === 'object' && 'message' in formError ? String(formError.message) : undefined;
+    return formMessage || apiError?.message;
   };
 
   const hasError = (fieldPath: string) => {
@@ -96,7 +96,7 @@ export const GuardianInformationStep: React.FC<GuardianInformationStepProps> = (
           <RadioGroup
             value={watchedRelationship}
             onValueChange={(value) => {
-              setValue('guardian.relationship', value as 'father' | 'mother' | 'guardian');
+              setValue('guardian.relationship', value as 'father' | 'mother' | 'legal_guardian' | 'other');
               trigger('guardian.relationship');
             }}
             className="mt-2"

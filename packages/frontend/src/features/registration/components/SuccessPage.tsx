@@ -17,13 +17,6 @@ export const SuccessPage: React.FC<SuccessPageProps> = ({ requestId, onNewApplic
     });
   };
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
   const submissionDate = new Date();
 
   return (

@@ -25,19 +25,30 @@ export const AcademicInformationStep: React.FC<AcademicInformationStepProps> = (
     trigger,
   } = useFormContext<RegistrationFormData>();
 
-  const watchedCurrentGrade = watch('academic.currentGrade');
-  const watchedRequestedGrade = watch('academic.requestedGrade');
+  const watchedCurrentGrade = watch('academic.currentGrade' as never) as unknown as string | undefined;
+  const watchedRequestedGrade = watch('academic.requestedGrade' as never) as unknown as string | undefined;
+
+  const readAcademicError = (fieldPath: string) => {
+    const key = fieldPath.replace(/^academic\./, '') as keyof NonNullable<
+      RegistrationFormData['academic']
+    >;
+    const formError = errors.academic?.[key];
+    const formMessage =
+      formError && typeof formError === 'object' && 'message' in formError
+        ? String(formError.message)
+        : undefined;
+    const apiError = getFieldError?.(fieldPath);
+    return { formMessage, hasFormError: !!formError, apiMessage: apiError?.message };
+  };
 
   const getErrorMessage = (fieldPath: string) => {
-    const formError = errors.academic?.[fieldPath.split('.')[1] as keyof typeof errors.academic];
-    const apiError = getFieldError?.(`academic.${fieldPath}`);
-    return formError?.message || apiError?.message;
+    const { formMessage, apiMessage } = readAcademicError(fieldPath);
+    return formMessage || apiMessage;
   };
 
   const hasError = (fieldPath: string) => {
-    const formError = errors.academic?.[fieldPath.split('.')[1] as keyof typeof errors.academic];
-    const apiError = getFieldError?.(`academic.${fieldPath}`);
-    return !!(formError || apiError);
+    const { hasFormError, apiMessage } = readAcademicError(fieldPath);
+    return hasFormError || !!apiMessage;
   };
 
   return (
@@ -52,13 +63,13 @@ export const AcademicInformationStep: React.FC<AcademicInformationStepProps> = (
             <Label htmlFor="academic.currentSchool">Current/Previous School</Label>
             <Input
               id="academic.currentSchool"
-              {...register('academic.currentSchool')}
+              {...register('academic.previousSchool')}
               placeholder="Enter current or previous school name"
-              className={`mt-1 ${hasError('academic.currentSchool') ? 'border-red-500' : ''}`}
+              className={`mt-1 ${hasError('academic.previousSchool') ? 'border-red-500' : ''}`}
             />
-            {getErrorMessage('academic.currentSchool') && (
+            {getErrorMessage('academic.previousSchool') && (
               <p className="mt-1 text-sm text-red-600">
-                {getErrorMessage('academic.currentSchool')}
+                {getErrorMessage('academic.previousSchool')}
               </p>
             )}
             <p className="mt-1 text-xs text-gray-500">
@@ -71,7 +82,7 @@ export const AcademicInformationStep: React.FC<AcademicInformationStepProps> = (
             <Select
               value={watchedCurrentGrade}
               onValueChange={(value) => {
-                setValue('academic.currentGrade', value);
+                setValue('academic.currentGrade', value as never);
                 trigger('academic.currentGrade');
               }}
             >
@@ -102,7 +113,7 @@ export const AcademicInformationStep: React.FC<AcademicInformationStepProps> = (
           <Select
             value={watchedRequestedGrade}
             onValueChange={(value) => {
-              setValue('academic.requestedGrade', value);
+              setValue('academic.requestedGrade', value as never);
               trigger('academic.requestedGrade');
             }}
           >

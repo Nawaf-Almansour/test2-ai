@@ -41,6 +41,7 @@ export interface RegistrationRequest {
   academic?: {
     previousSchool?: string;
     currentGrade?: Grade;
+    requestedGrade?: Grade;
     transferReason?: string;
   };
   transportationRequired?: boolean;

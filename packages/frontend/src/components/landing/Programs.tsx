@@ -47,7 +47,7 @@ const Programs: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {programs.map((program, index) => (
+          {programs.map((program) => (
             <div
               key={program.name}
               className="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow"
