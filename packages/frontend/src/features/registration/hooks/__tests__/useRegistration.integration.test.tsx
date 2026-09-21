@@ -49,7 +49,7 @@ describe('useRegistration Integration Tests', () => {
       lastName: 'Doe',
       dateOfBirth: '2015-01-01',
       gender: 'male' as const,
-      nationality: 'Saudi Arabian',
+      nationality: 'SA',
       requestedGrade: 'Grade 1',
     },
     guardian: {

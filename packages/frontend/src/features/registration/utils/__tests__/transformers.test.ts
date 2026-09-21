@@ -15,7 +15,7 @@ describe('transformers', () => {
         lastName: ' Doe ',
         dateOfBirth: '2015-01-01',
         gender: 'male',
-        nationality: 'Saudi Arabian',
+        nationality: 'SA',
         requestedGrade: 'Grade 1',
       },
       guardian: {
@@ -51,7 +51,7 @@ describe('transformers', () => {
           lastName: 'Doe',
           dateOfBirth: '2015-01-01',
           gender: 'male',
-          nationality: 'Saudi Arabian',
+          nationality: 'SA',
           requestedGrade: 'Grade 1',
           nationalId: undefined,
         },
@@ -86,7 +86,7 @@ describe('transformers', () => {
           lastName: 'Doe',
           dateOfBirth: '2015-01-01',
           gender: 'male',
-          nationality: 'Saudi Arabian',
+          nationality: 'SA',
           requestedGrade: 'Grade 1',
         },
         guardian: {

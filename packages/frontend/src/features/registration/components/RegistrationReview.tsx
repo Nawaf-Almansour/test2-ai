@@ -1,5 +1,5 @@
 import React from 'react';
-import { RegistrationFormData } from '../schemas/registration.schema';
+import { RegistrationFormData, nationalityLabels } from '../schemas/registration.schema';
 
 interface RegistrationReviewProps {
   data: RegistrationFormData;
@@ -107,7 +107,7 @@ export const RegistrationReview: React.FC<RegistrationReviewProps> = ({
           </div>
           <div>
             <dt className="text-sm font-medium text-gray-500">Nationality</dt>
-            <dd className="mt-1 text-sm text-gray-900">{data.student.nationality}</dd>
+            <dd className="mt-1 text-sm text-gray-900">{nationalityLabels[data.student.nationality] ?? data.student.nationality}</dd>
           </div>
           {data.student.nationalId && (
             <div>

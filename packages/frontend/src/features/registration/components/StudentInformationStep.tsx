@@ -4,19 +4,12 @@ import { Input } from '../../../components/ui/Input';
 import { Label } from '../../../components/ui/Label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/Select';
 import { RadioGroup, RadioGroupItem } from '../../../components/ui/RadioGroup';
-import { RegistrationFormData } from '../schemas/registration.schema';
+import { RegistrationFormData, nationalityOptions } from '../schemas/registration.schema';
 
 const grades = [
   'KG1', 'KG2', 'KG3',
   'GRADE_1', 'GRADE_2', 'GRADE_3', 'GRADE_4', 'GRADE_5', 'GRADE_6',
   'GRADE_7', 'GRADE_8', 'GRADE_9', 'GRADE_10', 'GRADE_11', 'GRADE_12',
-];
-
-const nationalities = [
-  'Saudi', 'Egyptian', 'Jordanian', 'Palestinian', 'Syrian', 'Lebanese',
-  'Yemeni', 'Emirati', 'Kuwaiti', 'Bahraini', 'Qatari', 'Omani',
-  'Sudanese', 'Moroccan', 'Algerian', 'Tunisian', 'Libyan', 'Iraqi',
-  'Other',
 ];
 
 interface StudentInformationStepProps {
@@ -140,9 +133,9 @@ export const StudentInformationStep: React.FC<StudentInformationStepProps> = ({ 
                 <SelectValue placeholder="Select nationality" />
               </SelectTrigger>
               <SelectContent>
-                {nationalities.map((nationality) => (
-                  <SelectItem key={nationality} value={nationality}>
-                    {nationality}
+                {nationalityOptions.map(({ code, label }) => (
+                  <SelectItem key={code} value={code}>
+                    {label}
                   </SelectItem>
                 ))}
               </SelectContent>

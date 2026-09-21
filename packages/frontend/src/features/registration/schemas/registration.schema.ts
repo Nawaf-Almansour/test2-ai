@@ -41,6 +41,31 @@ export const relationshipLabels: Record<string, string> = {
   other: 'Other',
 };
 
+// Nationality codes (ISO 3166-1 alpha-2) with display labels - aligned with backend DTO
+export const nationalityLabels: Record<string, string> = {
+  SA: 'Saudi',
+  EG: 'Egyptian',
+  JO: 'Jordanian',
+  PS: 'Palestinian',
+  SY: 'Syrian',
+  LB: 'Lebanese',
+  YE: 'Yemeni',
+  AE: 'Emirati',
+  KW: 'Kuwaiti',
+  BH: 'Bahraini',
+  QA: 'Qatari',
+  OM: 'Omani',
+  SD: 'Sudanese',
+  MA: 'Moroccan',
+  DZ: 'Algerian',
+  TN: 'Tunisian',
+  LY: 'Libyan',
+  IQ: 'Iraqi',
+  OT: 'Other', // sentinel code: "Other" has no ISO 3166-1 code
+};
+
+export const nationalityOptions = Object.entries(nationalityLabels).map(([code, label]) => ({ code, label }));
+
 // Base schemas for nested objects - aligned with backend DTOs
 const studentSchema = z.object({
   firstName: z.string().min(2, 'First name must be at least 2 characters').max(100, 'First name cannot exceed 100 characters'),

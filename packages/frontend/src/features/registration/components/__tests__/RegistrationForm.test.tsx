@@ -75,7 +75,7 @@ describe('RegistrationForm', () => {
       target: { value: '2015-01-01' },
     });
     fireEvent.change(screen.getByLabelText(/Nationality/), {
-      target: { value: 'Saudi Arabian' },
+      target: { value: 'SA' },
     });
     
     // Click next
