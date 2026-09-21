@@ -2,13 +2,12 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { configuration } from './config/configuration';
-import { validationSchema } from './config/validation';
+import configuration from './config/configuration';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 import { CommonModule } from './common/common.module';
 import { HealthModule } from './health/health.module';
 import { RegistrationModule } from './registration/registration.module';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -16,7 +15,6 @@ import { AppService } from './app.service';
     ConfigModule.forRoot({
       isGlobal: true,
       load: [configuration],
-      validationSchema: validationSchema,
       validationOptions: {
         allowUnknown: true,
         abortEarly: false,

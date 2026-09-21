@@ -11,7 +11,7 @@ import {
   UseGuards,
   ForbiddenException,
 } from '@nestjs/common';
-import { ThrottlerGuard, ThrottlerRateLimitExceptions } from '@nestjs/throttler';
+import { ThrottlerGuard } from '@nestjs/throttler';
 import { ApiTags, ApiOperation, ApiResponse, ApiHeader } from '@nestjs/swagger';
 import * as crypto from 'crypto';
 import { RegistrationService } from './registration.service';

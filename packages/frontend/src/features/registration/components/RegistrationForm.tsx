@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { registrationSchema, RegistrationFormData } from '../../schemas/registration.schema';
-import { useRegistration } from '../../hooks/useRegistration';
+import { registrationSchema, RegistrationFormData } from '../schemas/registration.schema';
+import { useRegistration } from '../hooks/useRegistration';
 import { StudentInformationStep } from './StudentInformationStep';
 import { GuardianInformationStep } from './GuardianInformationStep';
 import { AcademicInformationStep } from './AcademicInformationStep';
 import { AdditionalInformationStep } from './AdditionalInformationStep';
 import { RegistrationReview } from './RegistrationReview';
 import { RegistrationProgress } from './RegistrationProgress';
-import { transformFormDataToApiRequest, transformApiErrorToFormErrors } from '../../utils/transformers';
+import { transformFormDataToApiRequest, transformApiErrorToFormErrors } from '../utils/transformers';
 
 interface RegistrationFormProps {
   onSuccess: (requestId: string) => void;

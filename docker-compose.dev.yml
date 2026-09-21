@@ -43,13 +43,14 @@ services:
       - ./packages/backend:/app/packages/backend
       - ./package.json:/app/package.json
       - /app/node_modules
+      - /app/packages/backend/node_modules
     depends_on:
       mongodb:
         condition: service_healthy
     networks:
       - school-platform-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3001/api/v1/health"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3001/api/v1/health || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -70,6 +71,7 @@ services:
       - ./packages/frontend:/app/packages/frontend
       - ./package.json:/app/package.json
       - /app/node_modules
+      - /app/packages/frontend/node_modules
     depends_on:
       - backend
     networks:

@@ -4,7 +4,7 @@ import { Checkbox } from '../../../components/ui/Checkbox';
 import { Label } from '../../../components/ui/Label';
 import { Textarea } from '../../../components/ui/Textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/Select';
-import { RegistrationFormData } from '../../schemas/registration.schema';
+import { RegistrationFormData } from '../schemas/registration.schema';
 
 const sources = [
   { value: 'website', label: 'Website' },

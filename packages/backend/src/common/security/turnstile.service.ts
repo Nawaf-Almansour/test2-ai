@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 
 export interface TurnstileVerificationResponse {
   success: boolean;
@@ -59,8 +59,8 @@ export class TurnstileService {
 
       this.logger.debug('Turnstile verification successful');
       return true;
-    } catch (error) {
-      if (error instanceof AxiosError) {
+    } catch (error: any) {
+      if (error?.isAxiosError) {
         this.logger.error(`Turnstile verification error: ${error.message}`, error.stack);
       } else {
         this.logger.error('Unexpected error during Turnstile verification', error);

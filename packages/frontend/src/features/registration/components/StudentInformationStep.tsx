@@ -4,7 +4,7 @@ import { Input } from '../../../components/ui/Input';
 import { Label } from '../../../components/ui/Label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/Select';
 import { RadioGroup, RadioGroupItem } from '../../../components/ui/RadioGroup';
-import { RegistrationFormData } from '../../schemas/registration.schema';
+import { RegistrationFormData } from '../schemas/registration.schema';
 
 const grades = [
   'KG1', 'KG2', 'KG3',

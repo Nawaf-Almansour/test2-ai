@@ -1,9 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
-import * as cors from 'cors';
-import * as mongoSanitize from 'express-mongo-sanitize';
+import cors from 'cors';
+import mongoSanitize from 'express-mongo-sanitize';
 import { AppModule } from './app.module';
 import { ipRateLimit, mobileRateLimit, payloadSizeLimit } from './common/security/security.middleware';
 
@@ -11,7 +12,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Get configuration
-  const config = app.get('ConfigService');
+  const config = app.get(ConfigService);
   const securityConfig = config.get('security');
 
   // Apply security middleware based on configuration

@@ -1,5 +1,5 @@
 import React from 'react';
-import { RegistrationFormData } from '../../schemas/registration.schema';
+import { RegistrationFormData } from '../schemas/registration.schema';
 
 interface RegistrationReviewProps {
   data: RegistrationFormData;
