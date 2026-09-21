@@ -24,8 +24,10 @@ interface SelectValueProps {
 
 interface SelectContentProps {
   children: React.ReactNode;
-  open: boolean;
-  onClose: () => void;
+  /** Deprecated: open state is owned by the parent Select context. */
+  open?: boolean;
+  /** Deprecated: closing is handled internally. */
+  onClose?: () => void;
 }
 
 interface SelectItemProps {
@@ -47,8 +49,6 @@ const SelectContext = React.createContext<{
 export const Select: React.FC<SelectProps> = ({
   value,
   onValueChange,
-  placeholder,
-  disabled = false,
   className,
   children,
 }) => {
@@ -131,7 +131,8 @@ export const SelectValue: React.FC<SelectValueProps> = ({ placeholder, children 
   );
 };
 
-export const SelectContent: React.FC<SelectContentProps> = ({ children, open, onClose }) => {
+export const SelectContent: React.FC<SelectContentProps> = ({ children }) => {
+  const { open } = React.useContext(SelectContext);
   if (!open) return null;
 
   return (
@@ -162,7 +163,17 @@ export const SelectItem: React.FC<SelectItemProps> = ({ value, children, onSelec
 };
 
 // Compound component pattern
-Select.Trigger = SelectTrigger;
-Select.Value = SelectValue;
-Select.Content = SelectContent;
-Select.Item = SelectItem;
+type SelectCompound = React.FC<SelectProps> & {
+  Trigger: typeof SelectTrigger;
+  Value: typeof SelectValue;
+  Content: typeof SelectContent;
+  Item: typeof SelectItem;
+};
+
+export const SelectCompound = Select as SelectCompound;
+SelectCompound.Trigger = SelectTrigger;
+SelectCompound.Value = SelectValue;
+SelectCompound.Content = SelectContent;
+SelectCompound.Item = SelectItem;
+
+export default SelectCompound;

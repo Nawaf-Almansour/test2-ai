@@ -77,6 +77,7 @@ const guardianSchema = z.object({
 const academicSchema = z.object({
   previousSchool: z.string().optional(),
   currentGrade: z.enum(gradeValues).optional(),
+  requestedGrade: z.enum(gradeValues).optional(),
   transferReason: z.string().max(500, 'Transfer reason cannot exceed 500 characters').optional(),
 }).optional();
 

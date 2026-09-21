@@ -7,7 +7,6 @@ interface RegistrationProgressProps {
 
 export const RegistrationProgress: React.FC<RegistrationProgressProps> = ({
   currentStep,
-  totalSteps,
 }) => {
   const steps = [
     { id: 1, name: 'Student Info', description: 'Basic student information' },

@@ -53,7 +53,7 @@ export const transformFormDataToApiRequest = (formData: RegistrationFormData): R
       preferredContactMethod: formData.guardian.preferredContactMethod,
     },
     academic: {
-      currentSchool: formData.academic?.currentSchool?.trim() || undefined,
+      previousSchool: formData.academic?.previousSchool?.trim() || undefined,
       currentGrade: formData.academic?.currentGrade || undefined,
       requestedGrade: formData.academic?.requestedGrade || formData.student.requestedGrade,
       transferReason: formData.academic?.transferReason?.trim() || undefined,

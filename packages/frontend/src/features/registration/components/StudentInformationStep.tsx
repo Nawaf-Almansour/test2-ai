@@ -39,7 +39,8 @@ export const StudentInformationStep: React.FC<StudentInformationStepProps> = ({ 
   const getErrorMessage = (fieldPath: string) => {
     const formError = errors.student?.[fieldPath.split('.')[1] as keyof typeof errors.student];
     const apiError = getFieldError?.(`student.${fieldPath}`);
-    return formError?.message || apiError?.message;
+    const formMessage = formError && typeof formError === 'object' && 'message' in formError ? String(formError.message) : undefined;
+    return formMessage || apiError?.message;
   };
 
   const hasError = (fieldPath: string) => {
@@ -204,7 +205,7 @@ export const StudentInformationStep: React.FC<StudentInformationStepProps> = ({ 
           <Select
             value={watchedRequestedGrade}
             onValueChange={(value) => {
-              setValue('student.requestedGrade', value);
+              setValue('student.requestedGrade', value as never);
               trigger('student.requestedGrade');
             }}
           >

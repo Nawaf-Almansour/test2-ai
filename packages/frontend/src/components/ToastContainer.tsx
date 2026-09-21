@@ -18,22 +18,14 @@ export const ToastContainer: React.FC = () => {
       {toasts.map((toast) => (
         <Toast
           key={toast.id}
-          variant={toast.variant}
+          variant={toast.type}
           onOpenChange={(open) => !open && removeToast(toast.id)}
           duration={toast.duration}
         >
           <div className="grid gap-1">
             {toast.title && <ToastTitle>{toast.title}</ToastTitle>}
-            {toast.description && <ToastDescription>{toast.description}</ToastDescription>}
+            {toast.message && <ToastDescription>{toast.message}</ToastDescription>}
           </div>
-          {toast.action && (
-            <button
-              onClick={toast.action.onClick}
-              className="absolute right-8 top-4 text-sm font-medium text-blue-600 hover:text-blue-700"
-            >
-              {toast.action.label}
-            </button>
-          )}
           <ToastClose />
         </Toast>
       ))}

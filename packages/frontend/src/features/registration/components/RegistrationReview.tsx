@@ -181,10 +181,10 @@ export const RegistrationReview: React.FC<RegistrationReviewProps> = ({
           </button>
         </div>
         <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {data.academic?.currentSchool && (
+          {data.academic?.previousSchool && (
             <div>
               <dt className="text-sm font-medium text-gray-500">Current/Previous School</dt>
-              <dd className="mt-1 text-sm text-gray-900">{data.academic.currentSchool}</dd>
+              <dd className="mt-1 text-sm text-gray-900">{data.academic.previousSchool}</dd>
             </div>
           )}
           {data.academic?.currentGrade && (
@@ -287,7 +287,7 @@ export const RegistrationReview: React.FC<RegistrationReviewProps> = ({
             <div className="mt-2">
               <p className="text-xs font-medium text-red-700 mb-1">Field errors:</p>
               <ul className="text-xs text-red-600 space-y-1">
-                {Object.entries(error.error.fields).map(([field, message]) => (
+                {Object.entries((error.error?.fields ?? {}) as Record<string, string>).map(([field, message]) => (
                   <li key={field} className="flex items-start">
                     <span className="font-medium mr-2">{field}:</span>
                     <span>{message}</span>

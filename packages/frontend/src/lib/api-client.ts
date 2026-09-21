@@ -1,4 +1,7 @@
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import axios from 'axios';
+import type { InternalAxiosRequestConfig, AxiosError } from 'axios';
+
+type AxiosInstance = ReturnType<typeof axios.create>;
 import { ApiError } from '../features/registration/types/registration.types';
 
 // Create axios instance with default configuration
@@ -12,57 +15,64 @@ export const apiClient: AxiosInstance = axios.create({
 
 // Request interceptor
 apiClient.interceptors.request.use(
-  (config) => {
+  (config: InternalAxiosRequestConfig) => {
     // Add any request preprocessing here
     // For example: add auth token, logging, etc.
     return config;
   },
-  (error) => {
+  (error: AxiosError) => {
     return Promise.reject(error);
   }
 );
 
 // Response interceptor
 apiClient.interceptors.response.use(
-  (response: AxiosResponse) => {
+  (response) => {
     return response;
   },
-  (error) => {
+  (error: AxiosError) => {
     // Transform error responses to our standard format
     if (error.response) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
-      const { status, data } = error.response;
+      const { status } = error.response;
+      const data = (error.response.data ?? {}) as Record<string, unknown>;
+      const readStr = (key: string): string | undefined =>
+        typeof (data as Record<string, unknown>)?.[key] === 'string'
+          ? String((data as Record<string, unknown>)[key])
+          : undefined;
+      const readFields = (): Record<string, string> =>
+        ((data as Record<string, unknown>)?.fields as Record<string, string> | undefined) ?? {};
       
       // Transform different error formats to our standard ApiError format
       const apiError: ApiError = {
         code: 'UNEXPECTED_ERROR',
-        message: data?.message || 'An unexpected error occurred',
-        fields: data?.fields || {},
+        message: readStr('message') || 'An unexpected error occurred',
+        fields: readFields(),
       };
 
       // Handle specific HTTP status codes
       switch (status) {
         case 400:
-          if (data?.code === 'VALIDATION_ERROR') {
+          if (readStr('code') === 'VALIDATION_ERROR') {
             apiError.code = 'VALIDATION_ERROR';
-            apiError.message = data.message || 'Validation failed';
-            apiError.fields = data.fields || {};
-          } else if (data?.code === 'DUPLICATE_REGISTRATION') {
+            apiError.message = readStr('message') || 'Validation failed';
+            apiError.fields = readFields();
+          } else if (readStr('code') === 'DUPLICATE_REGISTRATION') {
             apiError.code = 'DUPLICATE_REGISTRATION';
-            apiError.message = data.message || 'Duplicate registration detected';
-          } else if (data?.code === 'GRADE_FULL') {
+            apiError.message = readStr('message') || 'Duplicate registration detected';
+          } else if (readStr('code') === 'GRADE_FULL') {
             apiError.code = 'GRADE_FULL';
-            apiError.message = data.message || 'Requested grade is full';
+            apiError.message = readStr('message') || 'Requested grade is full';
           } else {
             apiError.code = 'VALIDATION_ERROR';
-            apiError.message = data?.message || 'Bad request';
+            apiError.message = readStr('message') || 'Bad request';
           }
           break;
           
         case 429:
           apiError.code = 'RATE_LIMIT_EXCEEDED';
-          apiError.message = data?.message || 'Too many requests. Please try again later.';
+          apiError.message = readStr('message') || 'Too many requests. Please try again later.';
           break;
           
         case 500:
@@ -70,11 +80,11 @@ apiClient.interceptors.response.use(
         case 503:
         case 504:
           apiError.code = 'UNEXPECTED_ERROR';
-          apiError.message = data?.message || 'Server error. Please try again later.';
+          apiError.message = readStr('message') || 'Server error. Please try again later.';
           break;
           
         default:
-          apiError.message = data?.message || `Request failed with status ${status}`;
+          apiError.message = readStr('message') || `Request failed with status ${status}`;
       }
 
       // Create a new error with our standardized format
