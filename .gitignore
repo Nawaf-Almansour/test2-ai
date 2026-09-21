@@ -8,6 +8,7 @@ dist/
 # Environment
 .env
 .env.local
+.env.production.local
 
 # IDE
 .idea/
@@ -22,3 +23,16 @@ Thumbs.db
 # Logs
 *.log
 npm-debug.log*
+
+# Docker
+docker-compose.override.yml
+
+# Nginx
+nginx/logs/
+
+# Backups
+backup-*/
+*.dump
+
+# Deployment artifacts
+DEPLOYMENT_SUMMARY.md
